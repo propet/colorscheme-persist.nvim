@@ -4,6 +4,8 @@ Like `:Telescope colorscheme` but saving the selection to a file so the
 colorscheme can persist the next time you open neovim. Without having to
 manually modify your config files.
 
+![demo](demo.gif)
+
 
 # 📏 Requirements
 
