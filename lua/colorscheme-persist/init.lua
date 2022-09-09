@@ -107,6 +107,7 @@ function M.picker()
         else
           colorscheme = selection[1]
         end
+        vim.cmd("colorscheme default") -- reset settings
         vim.cmd("colorscheme " .. colorscheme) -- change colorscheme
         -- save
         _save_colorscheme(colorscheme)
