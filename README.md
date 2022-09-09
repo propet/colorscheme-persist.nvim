@@ -26,6 +26,19 @@ use({
 })
 ```
 
+Colorschemes are installed separately
+
+```
+-- e.g.
+use("Th3Whit3Wolf/space-nvim")
+use("luisiacc/gruvbox-baby")
+use("bluz71/vim-moonfly-colors")
+use("shaeinst/roshnivim-cs")
+use("folke/tokyonight.nvim")
+use("sainnhe/sonokai")
+use("sainnhe/everforest")
+```
+
 
 # 🚀 Usage
 
