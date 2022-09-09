@@ -28,7 +28,7 @@ use({
 
 Colorschemes are installed separately
 
-```
+```lua
 -- e.g.
 use("Th3Whit3Wolf/space-nvim")
 use("luisiacc/gruvbox-baby")
