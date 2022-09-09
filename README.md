@@ -7,7 +7,7 @@ manually modify your config files.
 
 # 📏 Requirements
 
-- Neovim >= 0.5
+- Neovim >= 0.7
 - [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim)
 
 
@@ -40,10 +40,10 @@ local colorscheme = persist_colorscheme.get_colorscheme()
 vim.cmd("colorscheme " .. colorscheme)
 
 -- Keymap for telescope selection
-vim.api.nvim_set_keymap(
+vim.keymap.set(
   "n",
   "<leader>sc",
-  ":lua require('colorscheme-persist').picker()<CR>",
+  require("colorscheme-persist").picker,
   { noremap = true, silent = true, desc = "colorscheme-persist" }
 )
 ```

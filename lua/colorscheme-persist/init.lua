@@ -40,16 +40,16 @@ local _get_colors = function(disable)
   disable = disable or {}
   local colors = {}
   local all_colors = vim.fn.getcompletion("", "color")
-  for i = #all_colors, 1, -1 do
+  for _, color in ipairs(all_colors) do
     local ignored = false
-    for j = #disable, 1, -1 do
-      if all_colors[i] == disable[j] then
+    for _, disabled_color in ipairs(disable) do
+      if color == disabled_color then
         ignored = true
         break
       end
     end
     if not ignored then
-      table.insert(colors, all_colors[i])
+      table.insert(colors, color)
     end
   end
   return colors
