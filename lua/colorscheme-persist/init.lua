@@ -74,6 +74,9 @@ function M.setup(opts)
   for k, v in pairs(opts) do
     M[k] = v
   end
+
+  -- Set available colors for picker
+  M.colorschemes = _get_colors(M.disable)
 end
 
 -- Get stored colorscheme
@@ -88,10 +91,9 @@ end
 
 -- Open telescope picker to change and save colorscheme
 function M.picker()
-  local colors = _get_colors(M.disable)
   pickers.new(M.picker_opts, {
     prompt_title = "colorschemes",
-    finder = finders.new_table({ results = colors }),
+    finder = finders.new_table({ results = M.colorschemes }),
     sorter = conf.generic_sorter(M.picker_opts),
     attach_mappings = function(prompt_bufnr)
       actions.select_default:replace(function()
