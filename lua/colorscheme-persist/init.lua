@@ -91,9 +91,23 @@ end
 
 -- Open telescope picker to change and save colorscheme
 function M.picker()
+  local before_color = M.get_colorscheme()
+  local colors = M.colorschemes or { before_color }
+
+  if not vim.tbl_contains(colors, before_color) then
+    table.insert(colors, 1, before_color)
+  end
+
+  colors = vim.list_extend(
+    { before_color },
+    vim.tbl_filter(function(color)
+      return color ~= before_color
+    end, colors)
+  )
+
   pickers.new(M.picker_opts, {
     prompt_title = "colorschemes",
-    finder = finders.new_table({ results = M.colorschemes }),
+    finder = finders.new_table({ results = colors }),
     sorter = conf.generic_sorter(M.picker_opts),
     attach_mappings = function(prompt_bufnr)
       actions.select_default:replace(function()
