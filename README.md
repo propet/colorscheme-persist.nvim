@@ -72,7 +72,7 @@ values:
 ```lua
 require("colorscheme-persist").setup({
   -- Absolute path to file where colorscheme should be saved
-  file_path = os.getenv("HOME") .. "/.nvim.colorscheme-persist.lua",
+  file_path = "$HOME/.nvim.colorscheme-persist.lua",
   -- In case there's no saved colorscheme yet
   fallback = "default",
   -- List of ugly colorschemes to avoid in the selection window

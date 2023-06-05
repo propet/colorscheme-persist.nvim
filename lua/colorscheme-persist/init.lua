@@ -5,10 +5,27 @@ local themes = require("telescope.themes")
 local actions = require("telescope.actions")
 local action_state = require("telescope.actions.state")
 
+local function getHomePath()
+  local uname = vim.loop.os_uname()
+  local os_name = uname.sysname
+  local is_mac = os_name == 'Darwin'
+  local is_linux = os_name == 'Linux'
+  local is_windows = os_name:find 'Windows' and true or false
+  local home = ""
+
+  if is_linux or is_mac then
+    home = os.getenv("HOME") or ""
+  elseif is_windows then
+    home = os.getenv("USERPROFILE") or ""
+  end
+
+  return home
+end
+
 -- main table with default options
 local M = {
   -- Absolute path to file where colorscheme should be saved
-  file_path = os.getenv("HOME") .. "/.nvim.colorscheme-persist.lua",
+  file_path = getHomePath() .. "/.nvim.colorscheme-persist.lua",
   -- In case there's no saved colorscheme yet
   fallback = "default",
   -- List of ugly colorschemes to avoid in the selection window
