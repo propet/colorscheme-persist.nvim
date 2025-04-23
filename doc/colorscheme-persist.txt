@@ -8,6 +8,7 @@ Repo:    https://github.com/propet/colorscheme-persist.nvim
 CONTENTS                                 *colorscheme-persist*
 
 Introduction...........................: |colorscheme-persist-introduction|
+Installation...........................: |colorscheme-persist-installation|
 Usage..................................: |colorscheme-persist-usage|
 Configuration..........................: |colorscheme-persist-configuration|
 Functions..............................: |colorscheme-persist-functions|
@@ -20,68 +21,85 @@ colorscheme can persist the next time you open neovim. Without having to
 manually modify your config files.
 
 ==============================================================================
+INSTALLATION                            *colorscheme-persist-installation*
+
+Use your favorite package manager.
+
+*lazy.nvim* example: >
+
+    {
+      "propet/colorscheme-persist.nvim",
+      lazy = false, -- load immediately to set the colorscheme on startup
+      dependencies = {
+        "nvim-telescope/telescope.nvim",
+        -- Add your colorscheme plugins here, e.g.:
+        "Th3Whit3Wolf/space-nvim",
+        "luisiacc/gruvbox-baby",
+        "folke/tokyonight.nvim",
+        "rebelot/kanagawa.nvim",
+      },
+      keys = {
+        {
+          "<leader>sc", -- Or your preferred keymap
+          function()
+            require("colorscheme-persist").picker()
+          end,
+          mode = "n",
+          desc = "Choose colorscheme",
+        },
+      },
+      opts = {
+        -- See |colorscheme-persist-configuration|
+      },
+    }
+<
+Note: Colorschemes need to be installed separately. Add them to your package
+manager configuration. The `dependencies` key in the example above is optional
+if you manage your colorscheme plugins elsewhere.
+
+==============================================================================
 USAGE                                              *colorscheme-persist-usage*
 
-Setup the plugin with desired default or custom options.
-Retrieve the saved colorscheme.
-Set a keymap to launch the *telescope* picker.
+The plugin automatically loads the saved colorscheme on startup when configured
+with `lazy = false` (as shown in the |colorscheme-persist-installation|
+example).
 
->
-    local persist_colorscheme = require("colorscheme-persist")
-
-    -- Setup
-    persist_colorscheme.setup()
-
-    -- Get stored colorscheme
-    local colorscheme = persist_colorscheme.get_colorscheme()
-
-    -- Set colorscheme
-    vim.cmd("colorscheme " .. colorscheme)
-
-    -- Keymap for telescope selection
-    vim.api.nvim_set_keymap(
-      "n",
-      "<leader>sc",
-      ":lua require('colorscheme-persist').picker()<CR>",
-      { noremap = true, silent = true, desc = "colorscheme-persist" }
-    )
-<
+Use the configured keymap (e.g., `<leader>sc`) to open the Telescope picker,
+select a colorscheme, and it will be automatically saved and applied for future
+sessions.
 
 ==============================================================================
 CONFIGURATION                              *colorscheme-persist-configuration*
 
 There are some configuration options provided with the following default
-values:
+values (passed to the `opts` table in `lazy.nvim` or `setup()` function):
 
 >
-    require("colorscheme-persist").setup({
+    {
       -- Absolute path to file where colorscheme should be saved
-      file_path = os.getenv("HOME") .. "/.nvim.colorscheme-persist.lua",
+      -- Default: vim.fn.stdpath("data") .. "/.nvim.colorscheme-persist.lua"
+      -- Example: file_path = vim.fn.stdpath("config") .. "/colorscheme.lua",
+      file_path = vim.fn.stdpath("data") .. "/.nvim.colorscheme-persist.lua",
+
       -- In case there's no saved colorscheme yet
+      -- Default: "default"
+      -- Example: fallback = "quiet",
       fallback = "default",
-      -- List of ugly colorschemes to avoid in the selection window
+
+      -- List of colorschemes to avoid in the selection window
+      -- Default: see below
+      -- Example: disable = { "darkblue" },
       disable = {
-        "darkblue",
-        "default",
-        "delek",
-        "desert",
-        "elflord",
-        "evening",
-        "industry",
-        "koehler",
-        "morning",
-        "murphy",
-        "pablo",
-        "peachpuff",
-        "ron",
-        "shine",
-        "slate",
-        "torte",
-        "zellner"
+        "darkblue", "default", "delek", "desert", "elflord", "evening",
+        "industry", "koehler", "morning", "murphy", "pablo", "peachpuff",
+        "ron", "shine", "slate", "torte", "zellner"
       },
+
       -- Options for the telescope picker
+      -- Default: require("telescope.themes").get_dropdown()
+      -- Example: picker_opts = require("telescope.themes").get_ivy(),
       picker_opts = require("telescope.themes").get_dropdown()
-    })
+    }
 <
 
 ==============================================================================
@@ -89,17 +107,11 @@ FUNCTIONS                                      *colorscheme-persist-functions*
 
                                               *setup()*
 setup({*opts})
-    Set options
+    Set options. Typically done via the `opts` table in `lazy.nvim`.
 
     Parameters: ~
-        {opts}  Options
-                • file_path: Absolute path to file where colorscheme should
-                be saved.
-                • fallback: Colorscheme to use in case there's no saved
-                colorscheme yet.
-                • disable: List of colorschemes you don't wan to appear in the
-                picker selector.
-                • picker_opts: Options for the telescope picker.
+        {opts}  Table with configuration options. See
+                |colorscheme-persist-configuration|.
 
                                               *get_colorscheme()*
 get_colorscheme()

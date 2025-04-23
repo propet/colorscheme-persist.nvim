@@ -1,3 +1,5 @@
+local M = {}
+
 local pickers = require("telescope.pickers")
 local finders = require("telescope.finders")
 local conf = require("telescope.config").values
@@ -5,27 +7,10 @@ local themes = require("telescope.themes")
 local actions = require("telescope.actions")
 local action_state = require("telescope.actions.state")
 
-local function getHomePath()
-  local uname = vim.loop.os_uname()
-  local os_name = uname.sysname
-  local is_mac = os_name == 'Darwin'
-  local is_linux = os_name == 'Linux'
-  local is_windows = os_name:find 'Windows' and true or false
-  local home = ""
-
-  if is_linux or is_mac then
-    home = os.getenv("HOME") or ""
-  elseif is_windows then
-    home = os.getenv("USERPROFILE") or ""
-  end
-
-  return home
-end
-
 -- main table with default options
-local M = {
+M = {
   -- Absolute path to file where colorscheme should be saved
-  file_path = getHomePath() .. "/.nvim.colorscheme-persist.lua",
+  file_path = vim.fn.stdpath("data") .. "/.nvim.colorscheme-persist.lua",
   -- In case there's no saved colorscheme yet
   fallback = "default",
   -- List of ugly colorschemes to avoid in the selection window
@@ -88,12 +73,18 @@ end
 function M.setup(opts)
   -- override defaults with input options
   opts = opts or {}
-  for k, v in pairs(opts) do
-    M[k] = v
-  end
+  M = vim.tbl_deep_extend("force", M, opts)
 
-  -- Set available colors for picker
-  M.colorschemes = _get_colors(M.disable)
+  -- Load saved colorscheme
+  local colorscheme_to_load = M.get_colorscheme()
+  print(colorscheme_to_load)
+  local ok, err = pcall(vim.cmd, "colorscheme " .. colorscheme_to_load)
+  if not ok then
+    vim.notify(
+      "colorscheme-persist: Failed to load colorscheme '" .. colorscheme_to_load .. "'. Error: " .. tostring(err),
+      vim.log.levels.WARN
+    )
+  end
 end
 
 -- Get stored colorscheme
@@ -109,7 +100,7 @@ end
 -- Open telescope picker to change and save colorscheme
 function M.picker()
   local before_color = M.get_colorscheme()
-  local colors = M.colorschemes or { before_color }
+  local colors = _get_colors(M.disable) or { before_color }
 
   if not vim.tbl_contains(colors, before_color) then
     table.insert(colors, 1, before_color)

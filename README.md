@@ -7,95 +7,69 @@ manually modify your config files.
 ![demo](demo.gif)
 
 
-# 📏 Requirements
-
-- Neovim >= 0.7
-- [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim)
-
-
 # 📦 Installation
 
-### [packer](https://github.com/wbthomason/packer.nvim)
+Use your favorite package manager.
+
+### [lazy.nvim](https://github.com/folke/lazy.nvim)
 
 ```lua
-use({
+{
   "propet/colorscheme-persist.nvim",
-  requires = {
-    "nvim-telescope/telescope-dap.nvim"
-  }
-})
+  lazy = false, -- load immediately to set the colorscheme on startup
+  dependencies = {
+    "nvim-telescope/telescope.nvim",
+    -- Add your colorscheme plugins here, e.g.:
+    "Th3Whit3Wolf/space-nvim",
+    "luisiacc/gruvbox-baby",
+    "folke/tokyonight.nvim",
+    "rebelot/kanagawa.nvim",
+  },
+  keys = {
+    {
+      "<leader>sc", -- Or your preferred keymap
+      function()
+        require("colorscheme-persist").picker()
+      end,
+      mode = "n",
+      desc = "Choose colorscheme",
+    },
+  },
+  opts = {
+    -- Absolute path to file where colorscheme should be saved
+    -- Default: file_path: vim.fn.stdpath("data") .. "/.nvim.colorscheme-persist.lua",
+    -- file_path = vim.fn.stdpath("config") .. "/colorscheme.lua",
+
+    -- In case there's no saved colorscheme yet
+    -- Default: fallback: "blue",
+    -- fallback = "quiet",
+
+    -- List of ugly colorschemes to avoid in the selection window
+    -- Default:
+    --   disable = {
+    --     "darkblue", "default", "delek", "desert", "elflord", "evening",
+    --     "industry", "koehler", "morning", "murphy", "pablo", "peachpuff",
+    --     "ron", "shine", "slate", "torte", "zellner"
+    --   },
+    -- disable = { "darkblue" },
+
+    -- Options for the telescope picker
+    -- Default: picker_opts = require("telescope.themes").get_dropdown()
+    -- picker_opts = require("telescope.themes").get_ivy(),
+  },
+}
 ```
 
-Colorschemes are installed separately
-
-```lua
--- e.g.
-use("Th3Whit3Wolf/space-nvim")
-use("luisiacc/gruvbox-baby")
-use("bluz71/vim-moonfly-colors")
-use("shaeinst/roshnivim-cs")
-use("folke/tokyonight.nvim")
-use("sainnhe/sonokai")
-use("sainnhe/everforest")
-```
+**Note:** Colorschemes need to be installed separately.
+Add them to your package manager configuration.
+The `dependencies` key in the example above is optional if you manage your colorscheme plugins elsewhere.
 
 
 # 🚀 Usage
 
-```lua
-local persist_colorscheme = require("colorscheme-persist")
+The plugin automatically loads the saved colorscheme on startup when configured as shown in the `lazy.nvim` example (`lazy = false`).
 
--- Setup
-persist_colorscheme.setup()
-
--- Get stored colorscheme
-local colorscheme = persist_colorscheme.get_colorscheme()
-
--- Set colorscheme
-vim.cmd("colorscheme " .. colorscheme)
-
--- Keymap for telescope selection
-vim.keymap.set(
-  "n",
-  "<leader>sc",
-  require("colorscheme-persist").picker,
-  { noremap = true, silent = true, desc = "colorscheme-persist" }
-)
-```
-
-
-# 📡 Configuration
-
-There are some configuration options provided with the following default
-values:
-
-```lua
-require("colorscheme-persist").setup({
-  -- Absolute path to file where colorscheme should be saved
-  file_path = "$HOME/.nvim.colorscheme-persist.lua",
-  -- In case there's no saved colorscheme yet
-  fallback = "default",
-  -- List of ugly colorschemes to avoid in the selection window
-  disable = {
-    "darkblue",
-    "default",
-    "delek",
-    "desert",
-    "elflord",
-    "evening",
-    "industry",
-    "koehler",
-    "morning",
-    "murphy",
-    "pablo",
-    "peachpuff",
-    "ron",
-    "shine",
-    "slate",
-    "torte",
-    "zellner"
-  },
-  -- Options for the telescope picker
-  picker_opts = require("telescope.themes").get_dropdown()
-})
+Use the configured keymap (e.g., `<leader>sc`) to open the Telescope picker,
+select a colorscheme,
+and it will be automatically saved and applied for future sessions.
 ```
