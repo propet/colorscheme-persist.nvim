@@ -77,7 +77,6 @@ function M.setup(opts)
 
   -- Load saved colorscheme
   local colorscheme_to_load = M.get_colorscheme()
-  print(colorscheme_to_load)
   local ok, err = pcall(vim.cmd, "colorscheme " .. colorscheme_to_load)
   if not ok then
     vim.notify(
