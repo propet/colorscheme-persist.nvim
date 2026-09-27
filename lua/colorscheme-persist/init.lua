@@ -34,7 +34,9 @@ M = {
     "zellner"
   },
   -- Options for the telescope picker
-  picker_opts = themes.get_dropdown()
+  picker_opts = themes.get_dropdown(),
+  -- Live-preview the colorscheme as the selection changes in the picker
+  enable_preview = true
 }
 
 -- Get list with all colorschemes without disabled ones
@@ -112,10 +114,13 @@ function M.picker()
     end, colors)
   )
 
-  pickers.new(M.picker_opts, {
+  local need_restore = M.enable_preview
+
+  local picker = pickers.new(M.picker_opts, {
     prompt_title = "colorschemes",
     finder = finders.new_table({ results = colors }),
     sorter = conf.generic_sorter(M.picker_opts),
+    previewer = false,
     attach_mappings = function(prompt_bufnr)
       actions.select_default:replace(function()
         actions.close(prompt_bufnr)
@@ -128,6 +133,7 @@ function M.picker()
         else
           colorscheme = selection[1]
         end
+        need_restore = false
         -- reset settings before setting new colorscheme
         vim.cmd("hi clear")
         vim.cmd("syntax reset")
@@ -137,7 +143,35 @@ function M.picker()
       end)
       return true
     end,
-  }):find()
+  })
+
+  if M.enable_preview then
+    -- restore original colorscheme if the picker is closed without confirming a selection
+    local close_windows = picker.close_windows
+    picker.close_windows = function(status)
+      close_windows(status)
+      if need_restore then
+        vim.cmd("hi clear")
+        vim.cmd("syntax reset")
+        vim.cmd("colorscheme " .. before_color)
+      end
+    end
+
+    -- preview the colorscheme as the selection changes (keyboard or mouse)
+    local set_selection = picker.set_selection
+    picker.set_selection = function(self, row)
+      set_selection(self, row)
+      local selection = action_state.get_selected_entry()
+      if selection == nil then
+        return
+      end
+      vim.cmd("hi clear")
+      vim.cmd("syntax reset")
+      vim.cmd("colorscheme " .. selection[1])
+    end
+  end
+
+  picker:find()
 end
 
 return M
