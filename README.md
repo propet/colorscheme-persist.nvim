@@ -123,6 +123,9 @@ Here's how you might override some defaults in your `lazy.nvim` setup:
 
     -- Use a different Telescope theme/layout
     picker_opts = require("telescope.themes").get_ivy({}),
+
+    -- Live-preview the colorscheme as you move through the picker
+    enable_preview = true,
   },
   keys = {
     {
